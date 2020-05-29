@@ -14,7 +14,7 @@ type Session struct {
 // Check if session is valid in the database
 func (session *Session) Check() (valid bool, err error) {
 	err = Db.QueryRow("SELECT id, uuid, email, user_id, created_at FROM sessions WHERE uuid = ?;", session.UUID).
-		Scan(&session.Id, &session.UUID, &session.Email, &session.UserID, &session.CreatedAt)
+		Scan(&session.ID, &session.UUID, &session.Email, &session.UserID, &session.CreatedAt)
 	if err != nil {
 		valid = false
 		return
@@ -41,8 +41,8 @@ func (session *Session) Delete() (err error) {
 // User get the user info from the session
 func (session *Session) User() (user User, err error) {
 	user = User{}
-	err = Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", session.UserId).
-		Scan(&user.Id, &user.UUID, &user.Name, &user.Email, &user.CreatedAt)
+	err = Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", session.UserID).
+		Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }
 

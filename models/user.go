@@ -31,7 +31,7 @@ func (u *User) CreateSession(session Session, err error) {
 	defer stmtOut.Close()
 
 	// use QueryRow to return a row and scan the returned id into the Session struct
-	err = stmtOut.QueryRow(uuid).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
+	err = stmtOut.QueryRow(uuid).Scan(&session.ID, &session.UUID, &session.Email, &session.UserID, &session.CreatedAt)
 	return
 }
 
@@ -39,7 +39,7 @@ func (u *User) CreateSession(session Session, err error) {
 func (u *User) Session() (session Session, err error) {
 	session = Session{}
 	err = Db.QueryRow("select id, uuid, email, user_id, created_id from sessions where uuid = ?;", u.UUID).
-		Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
+		Scan(&session.ID, &session.UUID, &session.Email, &session.UserID, &session.CreatedAt)
 	return
 }
 
@@ -53,7 +53,7 @@ func (u *User) Create() (err error) {
 	defer stmtin.Close()
 
 	uuid := createUUID()
-	stmtin.Exec(uuid, user.Name, user.Email, Sha1(user.Password), time.Now())
+	stmtin.Exec(uuid, u.Name, u.Email, Sha1(u.Password), time.Now())
 
 	stmtout, err := Db.Prepare("select id, uuid, created_at from users where uuid = ?")
 	if err != nil {
@@ -61,7 +61,7 @@ func (u *User) Create() (err error) {
 	}
 	defer stmtout.Close()
 	// use QueryRow to return a row and scan the returned id into the User struct
-	err = stmtout.QueryRow(uuid).Scan(&u.Id, &u.Uuid, &u.CreatedAt)
+	err = stmtout.QueryRow(uuid).Scan(&u.ID, &u.UUID, &u.CreatedAt)
 	return
 }
 
@@ -73,7 +73,7 @@ func (u *User) Delete() (err error) {
 		return
 	}
 
-	_, err = stmt.Exec(u.Id)
+	_, err = stmt.Exec(u.ID)
 	return
 }
 
@@ -86,7 +86,7 @@ func (u *User) Update() (err error) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(u.Name, u.Email, u.Id)
+	_, err = stmt.Exec(u.Name, u.Email, u.ID)
 	return
 }
 
@@ -105,7 +105,7 @@ func Users() (users []User, err error) {
 	}
 	for rows.Next() {
 		user := User{}
-		if err = rows.Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt); err != nil {
+		if err = rows.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Password, &user.CreatedAt); err != nil {
 			return
 		}
 		users = append(users, user)
@@ -118,7 +118,7 @@ func Users() (users []User, err error) {
 func UserByEmail(email string) (user User, err error) {
 	user = User{}
 	err = Db.QueryRow("SELECT id, uuid, name, email, password, created_at FROM users WHERE email = ?", email).
-		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
+		Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
 	return
 }
 
@@ -126,7 +126,7 @@ func UserByEmail(email string) (user User, err error) {
 func UserByUUID(uuid string) (user User, err error) {
 	user = User{}
 	err = Db.QueryRow("SELECT id, uuid, name, email, password, created_at FROM users WHERE uuid = ?", uuid).
-		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
+		Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
 	return
 }
 
@@ -164,7 +164,7 @@ func (u *User) CreatePost(thread Thread, body string) (post Post, err error) {
 	defer stmtin.Close()
 
 	uuid := createUUID()
-	stmtin.Exec(uuid, body, user.Id, thread.Id, time.Now())
+	stmtin.Exec(uuid, body, u.ID, thread.ID, time.Now())
 
 	stmtout, err := Db.Prepare("select id, uuid, body, user_id, thread_id, created_at from posts where uuid = ?")
 	if err != nil {

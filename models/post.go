@@ -20,7 +20,7 @@ func (p *Post) FormatCreatedAt() string {
 // User get the user who wrote the post
 func (p *Post) User() (user User) {
 	user = User{}
-	Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", post.UserID).
+	Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id = ?", p.UserID).
 		Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }

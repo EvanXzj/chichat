@@ -59,9 +59,9 @@ func (t *Thread) User() (user User) {
 	return
 }
 
-// Treads get all threads in the database and returns it
-func Treads() (threads []Thread, err error) {
-	rows, err := Db.Query("select id, uuid, topic, user_id, created_at from threads order created_at desc;")
+// Threads get all threads in the database and returns it
+func Threads() (threads []Thread, err error) {
+	rows, err := Db.Query("select id, uuid, topic, user_id, created_at from threads order by created_at desc;")
 	if err != nil {
 		return
 	}
