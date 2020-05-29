@@ -129,3 +129,50 @@ func UserByUUID(uuid string) (user User, err error) {
 		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
 	return
 }
+
+// CreateThread create a new thread
+func (u *User) CreateThread(topic string) (thread Thread, err error) {
+	statement := "insert into threads (uuid, topic, user_id, created_at) value (?, ?, ?, ?);"
+	stmtin, err := Db.Prepare(statement)
+	if err != nil {
+		return
+	}
+	defer stmtin.Close()
+
+	uuid := createUUID()
+	stmtin.Exec(uuid, topic, u.ID, time.Now())
+
+	stmtout, err := Db.Prepare("select id, uuid, topic, user_id, created_at from threads where uuid = ?")
+	if err != nil {
+		return
+	}
+	defer stmtout.Close()
+
+	// thread = Thread{}
+	// use QueryRow to return a row and scan the returned id into the Session struct
+	err = stmtout.QueryRow(uuid).Scan(&thread.ID, &thread.UUID, &thread.Topic, &thread.UserID, &thread.CreatedAt)
+	return
+}
+
+// CreatePost create a new post to a thread
+func (u *User) CreatePost(thread Thread, body string) (post Post, err error) {
+	statement := "insert into posts (uuid, body, user_id, thread_id, created_at) values (?, ?, ?, ?, ?)"
+	stmtin, err := Db.Prepare(statement)
+	if err != nil {
+		return
+	}
+	defer stmtin.Close()
+
+	uuid := createUUID()
+	stmtin.Exec(uuid, body, user.Id, thread.Id, time.Now())
+
+	stmtout, err := Db.Prepare("select id, uuid, body, user_id, thread_id, created_at from posts where uuid = ?")
+	if err != nil {
+		return
+	}
+	defer stmtout.Close()
+
+	// use QueryRow to return a row and scan the returned id into the Session struct
+	err = stmtout.QueryRow(uuid).Scan(&post.ID, &post.UUID, &post.Body, &post.UserID, &post.ThreadID, &post.CreatedAt)
+	return
+}
