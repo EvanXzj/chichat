@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // User users table struct
 type User struct {
@@ -13,8 +15,8 @@ type User struct {
 }
 
 // CreateSession create a new session for an existing user
-func (u *User) CreateSession(session Session, err error) {
-	statement := "insert into users(uuid, email, user_id, created_at) values (?, ?, ?, ?);"
+func (u *User) CreateSession() (session Session, err error) {
+	statement := "insert into sessions(uuid, email, user_id, created_at) values (?, ?, ?, ?)"
 	stat, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -22,9 +24,9 @@ func (u *User) CreateSession(session Session, err error) {
 	defer stat.Close()
 
 	uuid := createUUID()
-	stat.Exec(uuid, u.Name, u.Email, u.ID, u.CreatedAt)
+	stat.Exec(uuid, u.Email, u.ID, time.Now())
 
-	stmtOut, err := Db.Prepare("select id, uuid, email, user_id, created_id from sessions where uuid = ?;")
+	stmtOut, err := Db.Prepare("select id, uuid, email, user_id, created_at from sessions where uuid = ?;")
 	if err != nil {
 		return
 	}
