@@ -14,6 +14,7 @@ type WebRoute struct {
 	HandlerFunc http.HandlerFunc
 }
 
+// WebRoutes all web routes
 type WebRoutes []WebRoute
 
 var webRoutes = WebRoutes{
@@ -52,5 +53,29 @@ var webRoutes = WebRoutes{
 		"GET",
 		"/logout",
 		handlers.Logout,
+	},
+	{
+		"newThread",
+		"GET",
+		"/thread/new",
+		handlers.NewThread,
+	},
+	{
+		"createThread",
+		"POST",
+		"/thread/create",
+		handlers.CreateThread,
+	},
+	{
+		"readThread",
+		"GET",
+		"/thread/read",
+		handlers.ReadThread,
+	},
+	{
+		"postThread",
+		"POST",
+		"/thread/post",
+		handlers.PostThread,
 	},
 }

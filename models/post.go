@@ -5,7 +5,7 @@ import "time"
 // Post struct
 type Post struct {
 	ID        int
-	UUID      int
+	UUID      string
 	ThreadID  int
 	Body      string
 	UserID    int

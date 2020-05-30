@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -16,7 +17,7 @@ type User struct {
 
 // CreateSession create a new session for an existing user
 func (u *User) CreateSession() (session Session, err error) {
-	statement := "insert into sessions(uuid, email, user_id, created_at) values (?, ?, ?, ?)"
+	statement := "insert into sessions(uuid, email, user_id) values (?, ?, ?)"
 	stat, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -24,7 +25,7 @@ func (u *User) CreateSession() (session Session, err error) {
 	defer stat.Close()
 
 	uuid := createUUID()
-	stat.Exec(uuid, u.Email, u.ID, time.Now())
+	stat.Exec(uuid, u.Email, u.ID)
 
 	stmtOut, err := Db.Prepare("select id, uuid, email, user_id, created_at from sessions where uuid = ?;")
 	if err != nil {
@@ -47,7 +48,7 @@ func (u *User) Session() (session Session, err error) {
 
 // Create a new user, save user info into the database
 func (u *User) Create() (err error) {
-	statement := "insert into users (uuid, name, email, password, created_at) values (?, ?, ?, ?, ?);"
+	statement := "insert into users (uuid, name, email, password) values (?, ?, ?, ?);"
 	stmtin, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -55,10 +56,11 @@ func (u *User) Create() (err error) {
 	defer stmtin.Close()
 
 	uuid := createUUID()
-	stmtin.Exec(uuid, u.Name, u.Email, Sha1(u.Password), time.Now())
+	stmtin.Exec(uuid, u.Name, u.Email, Sha1(u.Password))
 
 	stmtout, err := Db.Prepare("select id, uuid, created_at from users where uuid = ?")
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	defer stmtout.Close()
@@ -134,7 +136,7 @@ func UserByUUID(uuid string) (user User, err error) {
 
 // CreateThread create a new thread
 func (u *User) CreateThread(topic string) (thread Thread, err error) {
-	statement := "insert into threads (uuid, topic, user_id, created_at) value (?, ?, ?, ?);"
+	statement := "insert into threads (uuid, topic, user_id) value (?, ?, ?);"
 	stmtin, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -142,7 +144,7 @@ func (u *User) CreateThread(topic string) (thread Thread, err error) {
 	defer stmtin.Close()
 
 	uuid := createUUID()
-	stmtin.Exec(uuid, topic, u.ID, time.Now())
+	stmtin.Exec(uuid, topic, u.ID)
 
 	stmtout, err := Db.Prepare("select id, uuid, topic, user_id, created_at from threads where uuid = ?")
 	if err != nil {
@@ -158,7 +160,7 @@ func (u *User) CreateThread(topic string) (thread Thread, err error) {
 
 // CreatePost create a new post to a thread
 func (u *User) CreatePost(thread Thread, body string) (post Post, err error) {
-	statement := "insert into posts (uuid, body, user_id, thread_id, created_at) values (?, ?, ?, ?, ?)"
+	statement := "insert into posts (uuid, body, user_id, thread_id) values (?, ?, ?, ?)"
 	stmtin, err := Db.Prepare(statement)
 	if err != nil {
 		return
@@ -166,7 +168,7 @@ func (u *User) CreatePost(thread Thread, body string) (post Post, err error) {
 	defer stmtin.Close()
 
 	uuid := createUUID()
-	stmtin.Exec(uuid, body, u.ID, thread.ID, time.Now())
+	stmtin.Exec(uuid, body, u.ID, thread.ID)
 
 	stmtout, err := Db.Prepare("select id, uuid, body, user_id, thread_id, created_at from posts where uuid = ?")
 	if err != nil {

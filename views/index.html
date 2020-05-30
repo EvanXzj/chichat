@@ -9,7 +9,7 @@
             <span class="lead"> <i class="fa fa-comment-o"></i> {{ .Topic }}</span>
         </div>
         <div class="panel-body">
-            Started by {{ .User.Name }} - {{ .FormatCreateAt }} - {{ .NumReplies }} posts.
+            Started by {{ .User.Name }} - {{ .FormatCreatedAt }} - {{ .NumReplies }} posts.
             <div class="pull-right">
                 <a href="/thread/read?id={{.UUID }}">Read more</a>
             </div>
