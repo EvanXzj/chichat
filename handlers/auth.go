@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/evanxzj/chitchat/models"
@@ -25,7 +24,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 func SignupAccount(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		fmt.Println("Cannot parse form")
+		danger("Cannot parse form")
 	}
 
 	user := models.User{
@@ -34,7 +33,7 @@ func SignupAccount(w http.ResponseWriter, r *http.Request) {
 		Password: r.PostFormValue("password"),
 	}
 	if err := user.Create(); err != nil {
-		fmt.Println("Cannot create user")
+		danger("Cannot create user")
 	}
 
 	http.Redirect(w, r, "/login", 302)
@@ -45,19 +44,19 @@ func SignupAccount(w http.ResponseWriter, r *http.Request) {
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		fmt.Println("can not parse form111")
+		danger("can not parse form111")
 	}
 	e := r.PostFormValue("email")
 	user, err := models.UserByEmail(e)
 	if err != nil {
-		fmt.Println("can not find user")
+		danger("can not find user")
 	}
 
 	if user.Password == models.Sha1(r.PostFormValue("password")) {
 		session, err := user.CreateSession()
 		if err != nil {
-			fmt.Println(err)
-			fmt.Println("can not create session")
+			danger(err)
+			danger("can not create session")
 		}
 		cookie := http.Cookie{
 			Name:     "_cookie",
@@ -77,7 +76,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 func Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("_cookie")
 	if err != nil {
-		fmt.Println("Failed to get cookie")
+		danger("Failed to get cookie")
 	}
 	if err != http.ErrNoCookie {
 		session := models.Session{UUID: cookie.Value}

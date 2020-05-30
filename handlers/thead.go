@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/evanxzj/chitchat/models"
@@ -27,16 +26,22 @@ func CreateThread(w http.ResponseWriter, r *http.Request) {
 	} else {
 		err = r.ParseForm()
 		if err != nil {
-			fmt.Println("can not parse form")
+			danger("can not parse form")
+			errorMessage(w, r, "Cannot  parse form")
+			return
 		}
 
 		user, err := session.User()
 		if err != nil {
-			fmt.Println("failed get user info from session")
+			danger("failed get user info from session")
+			errorMessage(w, r, "failed get user info from session")
+			return
 		}
 		topic := r.PostFormValue("topic")
 		if _, err = user.CreateThread(topic); err != nil {
-			fmt.Println("Cannot create thread")
+			danger("Cannot create thread")
+			errorMessage(w, r, "failed get user info from session")
+			return
 		}
 		http.Redirect(w, r, "/", 302)
 	}
@@ -49,7 +54,8 @@ func ReadThread(w http.ResponseWriter, r *http.Request) {
 	uuid := vals.Get("id")
 	thread, err := models.ThreadByUUID(uuid)
 	if err != nil {
-		fmt.Println("can not read the thread")
+		danger("can not read the thread")
+		errorMessage(w, r, "Cannot read thread")
 	} else {
 		_, err := session(w, r)
 		if err != nil {
