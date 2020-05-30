@@ -8,6 +8,8 @@ import (
 	"log"
 
 	// mysql driver
+
+	. "github.com/evanxzj/chitchat/config"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -16,7 +18,11 @@ var Db *sql.DB
 
 func init() {
 	var err error
-	Db, err = sql.Open("mysql", "chitchat:chitchat@/chitchat?charset=utf8&parseTime=true")
+
+	config := LoadConfig()
+	source := fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=true", config.Db.User, config.Db.Password,
+		config.Db.Address, config.Db.Database)
+	Db, err = sql.Open(config.Db.Driver, source)
 	if err != nil {
 		log.Fatal(err)
 	}
