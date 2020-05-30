@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	. "github.com/evanxzj/chitchat/config"
 	"github.com/evanxzj/chitchat/models"
 )
 
@@ -75,7 +76,7 @@ func generateHTML(w http.ResponseWriter, data interface{}, filenames ...string) 
 
 // Version return current app version number
 func Version() string {
-	return "0.0.1"
+	return ViperConfig.App.Version
 }
 
 func errorMessage(w http.ResponseWriter, r *http.Request, msg string) {

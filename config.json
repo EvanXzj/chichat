@@ -2,7 +2,8 @@
     "App": {
         "Static": "public",
         "Address": "0.0.0.0:8080",
-        "Log": "logs"
+        "Log": "logs",
+        "Version": "0.0.2"
     },
     "Db": {
         "Driver": "mysql",

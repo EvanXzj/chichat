@@ -30,3 +30,9 @@ func Error(w http.ResponseWriter, r *http.Request) {
 		generateHTML(w, vals.Get("msg"), "layout", "auth.navbar", "error")
 	}
 }
+
+// PrintVersion version print
+func PrintVersion(w http.ResponseWriter, r *http.Request) {
+	version := []byte(Version())
+	w.Write(version)
+}

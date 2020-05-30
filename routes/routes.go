@@ -84,4 +84,10 @@ var webRoutes = WebRoutes{
 		"/error",
 		handlers.Error,
 	},
+	{
+		"version",
+		"GET",
+		"/version",
+		handlers.PrintVersion,
+	},
 }

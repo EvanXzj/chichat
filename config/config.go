@@ -12,6 +12,7 @@ type App struct {
 	Address string
 	Static  string
 	Log     string
+	Version string
 }
 
 // Database config
